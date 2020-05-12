@@ -1,4 +1,14 @@
+require 'validation_type'
+require 'validation_presence'
+require 'validation_format'
+
 module ValidatableDSL
+  VALIDATIONS = {
+    presence: ValidationPresence,
+    format: ValidationFormat,
+    type: ValidationType
+  }.freeze
+
   def validate(attribute, options)
     (validations[attribute] ||= []) << build_validation(*options.first)
   end
@@ -10,15 +20,6 @@ module ValidatableDSL
   private
 
   def build_validation(name, option)
-    case name
-    when :presence
-      ->(value) { !value.nil? && !value.empty? }
-    when :format
-      ->(value) { !value.nil? && value.match?(option) }
-    when :type
-      ->(value) { value.class == option }
-    else
-      raise 'Unsupported validation'
-    end
+    VALIDATIONS[name]&.new(option) || raise('Unsupported validation')
   end
 end
