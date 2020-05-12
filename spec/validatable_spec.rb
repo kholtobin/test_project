@@ -17,11 +17,10 @@ describe Validatable do
   describe '#valid?' do
     subject { user.valid? }
 
+    before { User.instance_variable_set(:@validations, nil) }
+
     context 'with presence validation' do
-      before do
-        User.instance_variable_set(:@validations, nil)
-        User.validate(:name, presence: true)
-      end
+      before { User.validate(:name, presence: true) }
 
       context 'when name is nil' do
         let(:user) { User.new(name: nil) }
@@ -43,10 +42,7 @@ describe Validatable do
     end
 
     context 'with format validation' do
-      before do
-        User.instance_variable_set(:@validations, nil)
-        User.validate(:name, format: /^[A-Z]{3,6}$/ )
-      end
+      before { User.validate(:name, format: /^[A-Z]{3,6}$/ ) }
 
       context 'when does not match format' do
         let(:user) { User.new(name: '____') }
@@ -68,10 +64,7 @@ describe Validatable do
     end
 
     context 'with type validation' do
-      before do
-        User.instance_variable_set(:@validations, nil)
-        User.validate(:name, type: String)
-      end
+      before { User.validate(:name, type: String) }
 
       context 'when does not match type' do
         let(:user) { User.new(name: 123) }
